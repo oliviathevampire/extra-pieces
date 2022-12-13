@@ -2,11 +2,11 @@ package com.shnupbups.extrapieces.recipe;
 
 import com.shnupbups.extrapieces.core.PieceSet;
 import com.shnupbups.extrapieces.core.PieceType;
-import com.swordglowsblue.artifice.api.ArtificeResourcePack;
-
+import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
-import net.minecraft.tag.Tag;
+
+import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -26,7 +26,7 @@ public class WoodmillingPieceRecipe extends PieceRecipe {
 		this(output, count, new PieceIngredient(input));
 	}
 	
-	public WoodmillingPieceRecipe(PieceType output, int count, Tag.Identified<Item> input) {
+	public WoodmillingPieceRecipe(PieceType output, int count, TagKey input) {
 		this(output, count, new PieceIngredient(input));
 	}
 

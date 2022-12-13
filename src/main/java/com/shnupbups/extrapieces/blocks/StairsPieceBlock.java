@@ -6,21 +6,26 @@ import com.shnupbups.extrapieces.core.PieceType;
 import com.shnupbups.extrapieces.core.PieceTypes;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Material;
+import net.minecraft.block.StairsBlock;
 import net.minecraft.entity.Entity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+
+import java.util.Random;
 
 @SuppressWarnings("deprecation")
 public class StairsPieceBlock extends StairsBlock implements PieceBlock {
 	private final PieceSet set;
 
 	public StairsPieceBlock(PieceSet set) {
-		super(set.getBase().getDefaultState(), FabricBlockSettings.copyOf(set.getBase()).materialColor(set.getBase().getDefaultMaterialColor()));
+		super(set.getBase().getDefaultState(), FabricBlockSettings.copyOf(set.getBase()).materialColor(set.getBase().getDefaultMapColor()));
 		this.set = set;
 	}
 
@@ -30,6 +35,16 @@ public class StairsPieceBlock extends StairsBlock implements PieceBlock {
 
 	public PieceSet getSet() {
 		return set;
+	}
+
+	@Override
+	public void randomDisplayTick(BlockState blockState_1, World world_1, BlockPos blockPos_1, Random random_1) {
+
+	}
+
+	@Override
+	public void scheduledTick(BlockState blockState_1, ServerWorld world_1, BlockPos blockPos_1, Random random_1) {
+
 	}
 
 	public PieceType getType() {
@@ -42,9 +57,10 @@ public class StairsPieceBlock extends StairsBlock implements PieceBlock {
 	}
 
 	@Override
-	public void onSteppedOn(World world_1, BlockPos blockPos_1, Entity entity_1) {
+	public void onSteppedOn(World world, BlockPos pos, BlockState state, Entity entity) {
+		super.onSteppedOn(world, pos, state, entity);
 		try {
-			this.getBase().onSteppedOn(world_1, blockPos_1, entity_1);
+			this.getBase().onSteppedOn(world, pos, state, entity);
 		} catch (IllegalArgumentException ignored) {
 			ExtraPieces.debugLog("Caught an exception in onSteppedOn for "+this.getPieceString());
 		}

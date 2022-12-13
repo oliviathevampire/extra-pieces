@@ -5,26 +5,25 @@ import com.shnupbups.extrapieces.api.EPInitializer;
 import com.shnupbups.extrapieces.core.PieceSet;
 import com.shnupbups.extrapieces.core.PieceSets;
 import com.shnupbups.extrapieces.core.PieceTypes;
-import com.swordglowsblue.artifice.api.ArtificeResourcePack;
+import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
 import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.registry.Registry;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 import java.util.function.BiConsumer;
 
 @SuppressWarnings("WeakerAccess")
 public class ModBlocks {
 
-	public static HashMap<Identifier, PieceSet.Builder> setBuilders = new HashMap<>();
-	public static HashSet<PieceSet.Builder> primedBuilders = new HashSet<>();
+	public static LinkedHashMap<Identifier, PieceSet.Builder> setBuilders = new LinkedHashMap<>();
+	public static LinkedHashSet<PieceSet.Builder> primedBuilders = new LinkedHashSet<>();
 
-	public static HashMap<Pair<Identifier, Identifier>, Identifier> vanillaPieces = new HashMap<>();
+	public static LinkedHashMap<Pair<Identifier, Identifier>, Identifier> vanillaPieces = new LinkedHashMap<>();
 
 	public static boolean finished = false;
 
@@ -479,9 +478,7 @@ public class ModBlocks {
 		ModRecipes.init(data);
 		ModLootTables.init(data);
 		ModTags.init(data);
-		FabricLoader.getInstance().getEntrypoints("extrapieces", EPInitializer.class).forEach(api -> {
-			api.addData(data);
-		});
+		FabricLoader.getInstance().getEntrypoints("extrapieces", EPInitializer.class).forEach(api -> api.addData(data));
 
 		ModBlocks.finished = true;
 
@@ -508,8 +505,10 @@ public class ModBlocks {
 		return done;
 	}
 
-	public static <T> void visitRegistry(Registry<T> registry, BiConsumer<Identifier, T> visitor) {
-		registry.getIds().forEach(id -> visitor.accept(id, registry.get(id)));
+	public static <T> void visitRegistry(@NotNull Registry<T> registry, BiConsumer<Identifier, T> visitor) {
+		ArrayList<Identifier> ids = new ArrayList<>(registry.getIds());
+//		registry.getIds().forEach(id->ids.add(id));
+		for(Identifier id : ids) visitor.accept(id, registry.get(id));
 		RegistryEntryAddedCallback.event(registry).register((index, identifier, entry) -> visitor.accept(identifier, entry));
 	}
 }

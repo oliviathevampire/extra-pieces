@@ -3,7 +3,7 @@ package com.shnupbups.extrapieces.pieces;
 import com.shnupbups.extrapieces.blocks.PieceBlock;
 import com.shnupbups.extrapieces.core.PieceSet;
 import com.shnupbups.extrapieces.core.PieceType;
-import com.swordglowsblue.artifice.api.ArtificeResourcePack;
+import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
 
 public final class BasePiece extends PieceType {
 	public BasePiece() {

@@ -4,7 +4,7 @@ import com.shnupbups.extrapieces.ExtraPieces;
 import com.shnupbups.extrapieces.blocks.PieceBlock;
 import com.shnupbups.extrapieces.blocks.PieceBlockItem;
 import com.shnupbups.extrapieces.recipe.*;
-import com.swordglowsblue.artifice.api.ArtificeResourcePack;
+import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
 import net.minecraft.item.Item;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;

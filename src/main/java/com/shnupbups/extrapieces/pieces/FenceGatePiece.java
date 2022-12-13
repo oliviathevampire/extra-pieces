@@ -1,13 +1,12 @@
 package com.shnupbups.extrapieces.pieces;
 
-import com.shnupbups.extrapieces.ExtraPieces;
 import com.shnupbups.extrapieces.blocks.FenceGatePieceBlock;
 import com.shnupbups.extrapieces.blocks.PieceBlock;
 import com.shnupbups.extrapieces.core.PieceSet;
 import com.shnupbups.extrapieces.core.PieceType;
 import com.shnupbups.extrapieces.core.PieceTypes;
 import com.shnupbups.extrapieces.recipe.ShapedPieceRecipe;
-import com.swordglowsblue.artifice.api.ArtificeResourcePack;
+import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;

@@ -2,7 +2,7 @@ package com.shnupbups.extrapieces.api;
 
 import com.shnupbups.extrapieces.core.PieceType;
 import com.shnupbups.extrapieces.core.PieceTypes;
-import com.swordglowsblue.artifice.api.ArtificeResourcePack;
+import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
 
 /**
  * For mods to use to add new piece types and other stuff.

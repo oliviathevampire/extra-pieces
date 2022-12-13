@@ -7,7 +7,7 @@ import com.shnupbups.extrapieces.core.PieceTypes;
 import com.shnupbups.extrapieces.recipe.PieceIngredient;
 import com.shnupbups.extrapieces.recipe.ShapedPieceRecipe;
 import com.shnupbups.extrapieces.recipe.ShapelessPieceRecipe;
-import com.swordglowsblue.artifice.api.ArtificeResourcePack;
+import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 

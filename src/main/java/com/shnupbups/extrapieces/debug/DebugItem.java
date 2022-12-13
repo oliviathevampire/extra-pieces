@@ -9,7 +9,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
-import net.minecraft.text.LiteralText;
+
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
@@ -29,17 +30,17 @@ public class DebugItem extends Item {
 			context.getPlayer().getItemCooldownManager().set(this, 20);
 			if (state.getBlock() instanceof PieceBlock) {
 				PieceBlock pb = (PieceBlock) state.getBlock();
-				context.getPlayer().sendMessage(new LiteralText(state.getBlock() + " is piece! Type: " + pb.getType() + " Set: " + pb.getSet()), false);
+				context.getPlayer().sendMessage(Text.of(state.getBlock() + " is piece! Type: " + pb.getType() + " Set: " + pb.getSet()));
 				return ActionResult.SUCCESS;
 			} else if (PieceSets.hasSet(state.getBlock())) {
-				context.getPlayer().sendMessage(new LiteralText(state.getBlock() + " is base! " + PieceSets.getSet(state.getBlock())), false);
+				context.getPlayer().sendMessage(Text.of(state.getBlock() + " is base! " + PieceSets.getSet(state.getBlock())));
 				return ActionResult.SUCCESS;
 			} else if (PieceSets.isPiece(state.getBlock())) {
 				PieceBlock pb = PieceSets.asPieceBlock(state.getBlock());
-				context.getPlayer().sendMessage(new LiteralText(state.getBlock() + " is vanilla piece! Type: " + pb.getType() + " Base: " + pb.getSet().getBase()), false);
+				context.getPlayer().sendMessage(Text.of(state.getBlock() + " is vanilla piece! Type: " + pb.getType() + " Base: " + pb.getSet().getBase()));
 				return ActionResult.SUCCESS;
 			} else {
-				context.getPlayer().sendMessage(new LiteralText(state.getBlock() + " is not part of a PieceSet."), false);
+				context.getPlayer().sendMessage(Text.of(state.getBlock() + " is not part of a PieceSet."));
 			}
 		}
 		return ActionResult.PASS;
@@ -51,9 +52,9 @@ public class DebugItem extends Item {
 			if (ModBlocks.setBuilders.size() != PieceSets.registry.size()) {
 				for (PieceSet.Builder psb : ModBlocks.setBuilders.values()) {
 					if (!psb.isBuilt())
-						player.sendMessage(new LiteralText("Errored Piece Set: " + psb.toString() + " Make sure the base and any vanilla pieces actually exist!"), false);
+						player.sendMessage(Text.of("Errored Piece Set: " + psb.toString() + " Make sure the base and any vanilla pieces actually exist!"));
 				}
-			} else player.sendMessage(new LiteralText("All Piece Sets seem fine!"), false);
+			} else player.sendMessage(Text.of("All Piece Sets seem fine!"));
 			player.getItemCooldownManager().set(this, 20);
 			return new TypedActionResult<>(ActionResult.SUCCESS, player.getStackInHand(hand));
 		}

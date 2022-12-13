@@ -3,7 +3,6 @@ package com.shnupbups.extrapieces.core;
 import com.shnupbups.extrapieces.blocks.PieceBlock;
 import com.shnupbups.extrapieces.pieces.*;
 import com.shnupbups.extrapieces.register.ModConfigs;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;

@@ -4,11 +4,12 @@ import com.shnupbups.extrapieces.ExtraPieces;
 import com.shnupbups.extrapieces.core.PieceSet;
 import com.shnupbups.extrapieces.core.PieceType;
 import com.shnupbups.extrapieces.core.PieceTypes;
-
+import com.shnupbups.extrapieces.recipe.PieceIngredient.PIType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.Items;
-import net.minecraft.tag.Tag;
+
+import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -27,10 +28,10 @@ public class PieceIngredient {
 		this.type = PIType.ITEM;
 		this.id = Registry.ITEM.getId(item.asItem());
 	}
-	
-	public PieceIngredient(Tag.Identified<Item> tag) {
+
+	public PieceIngredient(TagKey tag) {
 		this.type = PIType.TAG;
-		this.id = tag.getId();
+		this.id = tag.id();
 	}
 
 	public Identifier getId(PieceSet set) {

@@ -4,6 +4,7 @@ import blue.endless.jankson.JsonArray;
 import blue.endless.jankson.JsonElement;
 import blue.endless.jankson.JsonObject;
 import blue.endless.jankson.JsonPrimitive;
+import com.google.gson.annotations.JsonAdapter;
 import com.shnupbups.extrapieces.ExtraPieces;
 import com.shnupbups.extrapieces.blocks.FakePieceBlock;
 import com.shnupbups.extrapieces.blocks.PieceBlock;
@@ -14,11 +15,10 @@ import com.shnupbups.extrapieces.register.ModConfigs;
 import com.shnupbups.extrapieces.register.ModItemGroups;
 import com.shnupbups.extrapieces.register.ModLootTables;
 import com.shnupbups.extrapieces.register.ModRecipes;
-import com.swordglowsblue.artifice.api.ArtificeResourcePack;
+import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
 
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.loader.api.FabricLoader;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.Material;
@@ -64,11 +64,11 @@ public class PieceSet {
 	private final String name;
 	private final String originalName;
 	private PieceType[] genTypes;
-	private Map<PieceType, PieceBlock> pieces = new HashMap<>();
+	private final Map<PieceType, PieceBlock> pieces = new HashMap<>();
 	private boolean registered = false;
 	private boolean stonecuttable;
 	private boolean woodmillable;
-	private ArrayList<PieceType> uncraftable = new ArrayList<>();
+	private final ArrayList<PieceType> uncraftable = new ArrayList<>();
 	private Identifier mainTexture;
 	private Identifier topTexture;
 	private Identifier bottomTexture;
@@ -97,7 +97,7 @@ public class PieceSet {
 		this.topTexture = mainTexture;
 		this.bottomTexture = topTexture;
 		this.opaque = base.getDefaultState().isOpaque();
-		this.genTypes = types.toArray(new PieceType[types.size()]);
+		this.genTypes = types.toArray(new PieceType[0]);
 		this.stonecuttable = isNormallyStonecuttable();
 		this.woodmillable = isNormallyWoodmillable();
 		if (isDefault) PieceSets.registerDefaultSet(this);
@@ -130,8 +130,7 @@ public class PieceSet {
 	}
 
 	public PieceSet setBottomTexture(Identifier id) {
-		Identifier newId = new Identifier(id.getNamespace(), (id.getPath().contains("block/") ? id.getPath() : "block/" + id.getPath()));
-		this.bottomTexture = newId;
+		this.bottomTexture = new Identifier(id.getNamespace(), (id.getPath().contains("block/") ? id.getPath() : "block/" + id.getPath()));
 		return this;
 	}
 
@@ -143,9 +142,8 @@ public class PieceSet {
 		return opaque;
 	}
 
-	public PieceSet setOpaque(boolean opaque) {
+	public void setOpaque(boolean opaque) {
 		this.opaque = opaque;
-		return this;
 	}
 
 	public boolean isTransparent() {
@@ -239,9 +237,8 @@ public class PieceSet {
 		return stonecuttable;
 	}
 
-	public PieceSet setStonecuttable(boolean stonecuttable) {
+	public void setStonecuttable(boolean stonecuttable) {
 		this.stonecuttable = stonecuttable;
-		return this;
 	}
 
 	public boolean isNormallyStonecuttable() {
@@ -252,9 +249,8 @@ public class PieceSet {
 		return woodmillable;
 	}
 
-	public PieceSet setWoodmillable(boolean woodmillable) {
+	public void setWoodmillable(boolean woodmillable) {
 		this.woodmillable = woodmillable;
-		return this;
 	}
 
 	public boolean isNormallyWoodmillable() {
@@ -401,7 +397,7 @@ public class PieceSet {
 
 	public Set<PieceType> getVanillaTypes() {
 		HashSet<PieceType> vt = new HashSet<>();
-		List gt = Arrays.asList(genTypes);
+		List<PieceType> gt = Arrays.asList(genTypes);
 		for (PieceType p : this.getPieces().keySet()) {
 			if (!gt.contains(p)) {
 				vt.add(p);
@@ -412,7 +408,7 @@ public class PieceSet {
 
 	public Set<PieceType> getExcludedTypes() {
 		HashSet<PieceType> et = new HashSet<>(PieceTypes.getTypesNoBase());
-		et.removeAll(this.getGenTypes());
+		this.getGenTypes().forEach(et::remove);
 		return et;
 	}
 
@@ -422,12 +418,11 @@ public class PieceSet {
 		return uc;
 	}
 
-	public PieceSet excludePiece(PieceType type) {
+	public void excludePiece(PieceType type) {
 		List<PieceType> types = Arrays.asList(this.genTypes);
 		HashSet<PieceType> newTypes = new HashSet<>(types);
 		newTypes.remove(type);
-		this.genTypes = newTypes.toArray(new PieceType[newTypes.size()]);
-		return this;
+		this.genTypes = newTypes.toArray(new PieceType[0]);
 	}
 
 	public String getTranslationKey() {
@@ -442,7 +437,6 @@ public class PieceSet {
 		this.includeMode = true;
 		return this;
 	}
-
 	public JsonObject toJson() {
 		JsonObject ob = new JsonObject();
 		ob.put("base", new JsonPrimitive(Registry.BLOCK.getId(this.getBase())));
@@ -500,6 +494,128 @@ public class PieceSet {
 		}
 		return ob;
 	}
+
+
+
+
+//	public JsonObject toJson() {
+//		JsonObject ob = new JsonObject();
+//		Identifier id = Registry.BLOCK.getId(this.getBase());
+//		ob.put("base", new JsonPrimitive(id.getPath()));
+//		if (this.isStonecuttable() != this.isNormallyStonecuttable()) {
+//			ob.put("stonecuttable", new JsonPrimitive(this.isStonecuttable()));
+//		}
+//		if (this.isWoodmillable() != this.isNormallyWoodmillable()) {
+//			ob.put("woodmillable", new JsonPrimitive(this.isWoodmillable()));
+//		}
+//		if (this.isOpaque() != this.getBase().getDefaultState().isOpaque()) {
+//			ob.put("opaque", new JsonPrimitive(this.isOpaque()));
+//		}
+//		if (this.hasCustomTexture()) {
+//			JsonObject tx = new JsonObject();
+//			if (hasMainTexture()) {
+//				tx.put("main", new JsonPrimitive(this.getMainTexture().getPath()));
+//			}
+//			if (hasTopTexture()) {
+//				tx.put("top", new JsonPrimitive(this.getTopTexture().getPath()));
+//			}
+//			if (hasBottomTexture()) {
+//				tx.put("bottom", new JsonPrimitive(this.getBottomTexture().getPath()));
+//			}
+//			ob.put("textures", tx);
+//		}
+//
+////		if (!this.getVanillaTypes().isEmpty()) {
+////			JsonObject vp = new JsonObject();
+////			Iterator<PieceType> it = this.getVanillaTypes().iterator();
+////			while (it.hasNext()) {
+////				PieceType p = it.next();
+////				Identifier pi = Registry.BLOCK.getId(this.getPiece(p));
+////				vp.put(p.toString(), new JsonPrimitive(pi.toString()));
+////			}
+////			ob.put("vanilla_pieces", vp);
+////		}
+//
+//
+//		if (!this.getVanillaTypes().isEmpty()) {
+//			JsonObject vp = new JsonObject();
+//			for (PieceType p : this.getVanillaTypes()) {
+//				Identifier pv =  Registry.BLOCK.getId(this.getPiece(p));
+//				vp.put(p.toString(), new JsonPrimitive(pv.getPath()));
+//			}
+//			ob.put("vanilla_pieces", vp);
+//		}
+//
+//
+////		if (!this.getUncraftableTypes().isEmpty()) {
+////			JsonArray uc = new JsonArray();
+////			Iterator<PieceType> it = this.getUncraftableTypes().iterator();
+////			while (it.hasNext()) {
+////				PieceType p = it.next();
+////				Identifier pi = Registry.BLOCK.getId(this.getPiece(p));
+////				uc.add(new JsonPrimitive(pi.toString()));
+////			}
+////			ob.put("uncraftable", uc);
+////		}
+//
+//
+//		if (!this.getUncraftableTypes().isEmpty()) {
+//			JsonArray uc = new JsonArray();
+//			for (PieceType p : this.getUncraftableTypes()) {
+//				Identifier pu = Registry.BLOCK.getId(this.getPiece(p));
+//				uc.add(new JsonPrimitive(pu.getPath()));
+//			}
+//			ob.put("uncraftable", uc);
+//		}
+//
+//
+////		if (!this.getExcludedTypes().isEmpty() && !includeMode) {
+////			JsonArray ex = new JsonArray();
+////			Iterator<PieceType> it = this.getExcludedTypes().iterator();
+////			while (it.hasNext()) {
+////				PieceType p = it.next();
+////				Identifier pi = Registry.BLOCK.getId(this.getPiece(p));
+////				if (!this.isVanillaPiece(p)) {
+////					ex.add(new JsonPrimitive(pi.toString()));
+////				}
+////			}
+////			if (!ex.isEmpty()) ob.put("exclude", ex);
+////		}
+//
+//		if (!this.getExcludedTypes().isEmpty() && !includeMode) {
+//			JsonArray ex = new JsonArray();
+//			for (PieceType p : this.getExcludedTypes()) {
+//				Identifier pe = Registry.BLOCK.getId(this.getPiece(p));
+//				if (!this.isVanillaPiece(p)) {
+//					ex.add(new JsonPrimitive(pe.getPath()));
+//				}
+//			}
+//			if (!ex.isEmpty()) ob.put("exclude", ex);
+//		}
+//
+////		if (includeMode) {
+////			JsonArray in = new JsonArray();
+////			Iterator<PieceType> it = this.getGenTypes().iterator();
+////			while (it.hasNext()) {
+////				PieceType p = it.next();
+////				Identifier pi = Registry.BLOCK.getId(this.getPiece(p));
+////				in.add(new JsonPrimitive(pi.toString()));
+////			}
+////			ob.put("include", in);
+////		}
+////		return ob;
+////	}
+//
+//		if (includeMode) {
+//			JsonArray in = new JsonArray();
+//			for (PieceType p : this.getGenTypes()) {
+//				Identifier pi = Registry.BLOCK.getId(this.getPiece(p));
+//				in.add(new JsonPrimitive(pi.getPath()));
+//			}
+//			ob.put("include", in);
+//		}
+//		return ob;
+//	}
 
 	public void addRecipes(ArtificeResourcePack.ServerResourcePackBuilder data) {
 		for (PieceBlock pb : this.getPieceBlocks()) {
@@ -582,16 +698,17 @@ public class PieceSet {
 			this.packName = packName;
 			this.base = new Identifier(Objects.requireNonNull(ob.get(String.class, "base")));
 			if (ob.containsKey("stonecuttable")) {
-				this.stonecuttable = ob.get("stonecuttable").equals(JsonPrimitive.TRUE);
+				this.stonecuttable = Objects.equals(ob.get("stonecuttable"), JsonPrimitive.TRUE);
 			}
 			if (ob.containsKey("woodmillable")) {
-				this.woodmillable = ob.get("woodmillable").equals(JsonPrimitive.TRUE);
+				this.woodmillable = Objects.equals(ob.get("woodmillable"), JsonPrimitive.TRUE);
 			}
 			if (ob.containsKey("opaque")) {
-				this.opaque = ob.get("opaque").equals(JsonPrimitive.TRUE);
+				this.opaque = Objects.equals(ob.get("opaque"), JsonPrimitive.TRUE);
 			}
 			if (ob.containsKey("textures")) {
 				JsonObject tx = ob.getObject("textures");
+				assert tx != null;
 				if (tx.containsKey("main")) {
 					this.mainTexture = new Identifier(Objects.requireNonNull(tx.get(String.class, "main")));
 				}
@@ -605,6 +722,7 @@ public class PieceSet {
 			if (ob.containsKey("vanilla_pieces")) {
 				JsonObject vp = ob.getObject("vanilla_pieces");
 
+				assert vp != null;
 				for (Map.Entry<String, JsonElement> entry : vp.entrySet()) {
 					String value = vp.getMarshaller().marshall(String.class, entry.getValue());
 
@@ -613,6 +731,7 @@ public class PieceSet {
 			}
 			if (ob.containsKey("exclude")) {
 				JsonArray ex = ob.get(JsonArray.class, "exclude");
+				assert ex != null;
 				for (JsonElement je : ex) {
 					JsonPrimitive jp = (JsonPrimitive) je;
 					String s = jp.asString();
@@ -623,6 +742,7 @@ public class PieceSet {
 				this.includeMode = true;
 				this.genTypes.clear();
 				JsonArray in = ob.get(JsonArray.class, "include");
+				assert in != null;
 				for (JsonElement je : in) {
 					JsonPrimitive jp = (JsonPrimitive) je;
 					String s = jp.asString();
@@ -632,6 +752,7 @@ public class PieceSet {
 			}
 			if (ob.containsKey("uncraftable")) {
 				JsonArray uc = ob.get(JsonArray.class, "uncraftable");
+				assert uc != null;
 				for (JsonElement je : uc) {
 					JsonPrimitive jp = (JsonPrimitive) je;
 					String s = jp.asString();
@@ -708,12 +829,12 @@ public class PieceSet {
 		}
 
 		public boolean isReady() {
-			if (!Registry.BLOCK.getOrEmpty(base).isPresent() || !Registry.ITEM.getOrEmpty(base).isPresent()) {
+			if (Registry.BLOCK.getOrEmpty(base).isEmpty() || Registry.ITEM.getOrEmpty(base).isEmpty()) {
 				return false;
 			}
 
 			for (Identifier id : getVanillaPieces().values()) {
-				if (!Registry.BLOCK.getOrEmpty(id).isPresent() || !Registry.ITEM.getOrEmpty(id).isPresent()) {
+				if (Registry.BLOCK.getOrEmpty(id).isEmpty() || Registry.ITEM.getOrEmpty(id).isEmpty()) {
 					return false;
 				}
 			}
@@ -726,3 +847,5 @@ public class PieceSet {
 		}
 	}
 }
+
+

@@ -17,8 +17,8 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
-import net.minecraft.world.WorldAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
 import net.minecraft.world.explosion.Explosion;
 
 import java.util.Random;
@@ -28,7 +28,7 @@ public class WallPieceBlock extends WallBlock implements PieceBlock {
 	private final PieceSet set;
 
 	public WallPieceBlock(PieceSet set) {
-		super(FabricBlockSettings.copyOf(set.getBase()).materialColor(set.getBase().getDefaultMaterialColor()));
+		super(FabricBlockSettings.copyOf(set.getBase()).materialColor(set.getBase().getDefaultMapColor()));
 		this.set = set;
 	}
 
@@ -47,8 +47,8 @@ public class WallPieceBlock extends WallBlock implements PieceBlock {
 	@Environment(EnvType.CLIENT)
 	@Override
 	public void randomDisplayTick(BlockState blockState_1, World world_1, BlockPos blockPos_1, Random random_1) {
-		super.randomDisplayTick(blockState_1, world_1, blockPos_1, random_1);
-		this.getBase().randomDisplayTick(this.getBaseState(), world_1, blockPos_1, random_1);
+		super.randomDisplayTick(blockState_1, world_1, blockPos_1, (net.minecraft.util.math.random.Random) random_1);
+		this.getBase().randomDisplayTick(this.getBaseState(), world_1, blockPos_1, (net.minecraft.util.math.random.Random) random_1);
 	}
 
 	@Override
@@ -86,10 +86,10 @@ public class WallPieceBlock extends WallBlock implements PieceBlock {
 	}
 
 	@Override
-	public void onSteppedOn(World world_1, BlockPos blockPos_1, Entity entity_1) {
-		super.onSteppedOn(world_1, blockPos_1, entity_1);
+	public void onSteppedOn(World world, BlockPos pos, BlockState state, Entity entity) {
+		super.onSteppedOn(world, pos, state, entity);
 		try {
-			this.getBase().onSteppedOn(world_1, blockPos_1, entity_1);
+			this.getBase().onSteppedOn(world, pos, state, entity);
 		} catch (IllegalArgumentException ignored) {
 			ExtraPieces.debugLog("Caught an exception in onSteppedOn for "+this.getPieceString());
 		}
@@ -97,8 +97,8 @@ public class WallPieceBlock extends WallBlock implements PieceBlock {
 
 	@Override
 	public void scheduledTick(BlockState blockState_1, ServerWorld world_1, BlockPos blockPos_1, Random random_1) {
-		super.scheduledTick(blockState_1, world_1, blockPos_1, random_1);
-		this.getBase().scheduledTick(this.getBaseState(), world_1, blockPos_1, random_1);
+		super.scheduledTick(blockState_1, world_1, blockPos_1, (net.minecraft.util.math.random.Random) random_1);
+		this.getBase().scheduledTick(this.getBaseState(), world_1, blockPos_1, (net.minecraft.util.math.random.Random) random_1);
 	}
 
 	@Override

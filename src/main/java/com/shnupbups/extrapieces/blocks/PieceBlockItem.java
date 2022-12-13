@@ -8,7 +8,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
+
 import net.minecraft.util.Language;
 
 public class PieceBlockItem extends BlockItem {
@@ -28,7 +28,7 @@ public class PieceBlockItem extends BlockItem {
 	@Override
 	public Text getName(ItemStack stack) {
 		if (Language.getInstance().hasTranslation(this.getTranslationKey(stack))) return super.getName(stack);
-		return new TranslatableText(getPieceBlock().getType().getTranslationKey(), new TranslatableText(getPieceBlock().getSet().getTranslationKey()));
+		return Text.translatable((getPieceBlock().getType().getTranslationKey()), Text.translatable((getPieceBlock().getSet().getTranslationKey())));
 	}
 
 	@Override

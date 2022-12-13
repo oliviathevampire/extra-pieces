@@ -7,8 +7,8 @@ import com.shnupbups.extrapieces.core.PieceTypes;
 import com.shnupbups.extrapieces.debug.DebugItem;
 import com.shnupbups.extrapieces.register.ModBlocks;
 import com.shnupbups.extrapieces.register.ModConfigs;
-import com.swordglowsblue.artifice.api.Artifice;
-import com.swordglowsblue.artifice.api.ArtificeResourcePack;
+import io.github.vampirestudios.artifice.api.Artifice;
+import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.loader.api.FabricLoader;
@@ -93,7 +93,7 @@ public class ExtraPieces implements ModInitializer {
 			api.onInitialize();
 		});
 		ModConfigs.initPiecePacks();
-		datapack = Artifice.registerData(getID("ep_data"), ModBlocks::init);
+		datapack = Artifice.registerData(getID("ep_data"), ArtificeResourcePack.ofData(ModBlocks::init));
 		Registry.register(Registry.ITEM, getID("debug_item"), new DebugItem());
 
 		ServerLifecycleEvents.SERVER_STARTED.register(server -> {

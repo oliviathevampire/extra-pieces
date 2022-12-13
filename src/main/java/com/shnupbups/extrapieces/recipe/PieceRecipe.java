@@ -2,7 +2,7 @@ package com.shnupbups.extrapieces.recipe;
 
 import com.shnupbups.extrapieces.core.PieceSet;
 import com.shnupbups.extrapieces.core.PieceType;
-import com.swordglowsblue.artifice.api.ArtificeResourcePack;
+import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
 import net.minecraft.block.Block;
 import net.minecraft.util.Identifier;
 
