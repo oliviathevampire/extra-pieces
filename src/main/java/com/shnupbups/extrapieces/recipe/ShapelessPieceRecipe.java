@@ -4,7 +4,8 @@ import com.shnupbups.extrapieces.core.PieceSet;
 import com.shnupbups.extrapieces.core.PieceType;
 import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.Registries;
 
 public class ShapelessPieceRecipe extends PieceRecipe {
 	private PieceIngredient[] inputs;
@@ -20,8 +21,8 @@ public class ShapelessPieceRecipe extends PieceRecipe {
 
 	public void add(ArtificeResourcePack.ServerResourcePackBuilder data, Identifier id, PieceSet set) {
 		data.addShapelessRecipe(id, recipe -> {
-			recipe.result(Registry.BLOCK.getId(this.getOutput(set)), this.getCount());
-			recipe.group(Registry.BLOCK.getId(getOutput(set)));
+			recipe.result(Registries.BLOCK.getId(this.getOutput(set)), this.getCount());
+			recipe.group(Registries.BLOCK.getId(getOutput(set)));
 			for (PieceIngredient pi : getInputs()) {
 				if(pi.isTag()) recipe.ingredientTag(pi.getId(set));
 				else recipe.ingredientItem(pi.getId(set));

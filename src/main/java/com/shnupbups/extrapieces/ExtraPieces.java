@@ -13,7 +13,8 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.Registries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -94,7 +95,7 @@ public class ExtraPieces implements ModInitializer {
 		});
 		ModConfigs.initPiecePacks();
 		datapack = Artifice.registerData(getID("ep_data"), ArtificeResourcePack.ofData(ModBlocks::init));
-		Registry.register(Registry.ITEM, getID("debug_item"), new DebugItem());
+		Registry.register(Registries.ITEM, getID("debug_item"), new DebugItem());
 
 		ServerLifecycleEvents.SERVER_STARTED.register(server -> {
 			if (ModBlocks.setBuilders.size() != PieceSets.registry.size()) {

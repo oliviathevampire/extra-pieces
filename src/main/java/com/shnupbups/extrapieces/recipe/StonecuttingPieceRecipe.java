@@ -6,9 +6,10 @@ import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 
-import net.minecraft.tag.TagKey;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.Registries;
 
 public class StonecuttingPieceRecipe extends PieceRecipe {
 	private PieceIngredient input;
@@ -36,8 +37,8 @@ public class StonecuttingPieceRecipe extends PieceRecipe {
 
 	public void add(ArtificeResourcePack.ServerResourcePackBuilder data, Identifier id, PieceSet set) {
 		data.addStonecuttingRecipe(id, recipe -> {
-			recipe.result(Registry.BLOCK.getId(getOutput(set)));
-			recipe.group(Registry.BLOCK.getId(getOutput(set)));
+			recipe.result(Registries.BLOCK.getId(getOutput(set)));
+			recipe.group(Registries.BLOCK.getId(getOutput(set)));
 			recipe.count(getCount());
 			PieceIngredient pi = getInput();
 			if(pi.isTag()) recipe.ingredientTag(pi.getId(set));

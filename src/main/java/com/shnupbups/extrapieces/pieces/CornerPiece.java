@@ -8,7 +8,8 @@ import com.shnupbups.extrapieces.core.PieceTypes;
 import com.shnupbups.extrapieces.recipe.ShapedPieceRecipe;
 import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.Registries;
 
 import java.util.ArrayList;
 
@@ -28,7 +29,7 @@ public class CornerPiece extends PieceType {
 	}
 
 	public void addBlockstate(ArtificeResourcePack.ClientResourcePackBuilder pack, PieceBlock pb) {
-		pack.addBlockState(Registry.BLOCK.getId(pb.getBlock()), state -> {
+		pack.addBlockState(Registries.BLOCK.getId(pb.getBlock()), state -> {
 			for (Direction d : Direction.values()) {
 				if (d != Direction.UP && d != Direction.DOWN) {
 					state.variant("facing=" + d.asString(), var -> {

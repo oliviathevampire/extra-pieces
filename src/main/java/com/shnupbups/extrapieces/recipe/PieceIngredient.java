@@ -9,9 +9,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.Items;
 
-import net.minecraft.tag.TagKey;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.Registries;
 
 import java.util.Optional;
 
@@ -26,7 +27,7 @@ public class PieceIngredient {
 
 	public PieceIngredient(ItemConvertible item) {
 		this.type = PIType.ITEM;
-		this.id = Registry.ITEM.getId(item.asItem());
+		this.id = Registries.ITEM.getId(item.asItem());
 	}
 
 	public PieceIngredient(TagKey tag) {
@@ -43,7 +44,7 @@ public class PieceIngredient {
 			case TAG:
 				return id;
 			case PIECE:
-				return Registry.ITEM.getId(set.getPiece(getPieceType()).asItem());
+				return Registries.ITEM.getId(set.getPiece(getPieceType()).asItem());
 			default:
 				return null;
 		}

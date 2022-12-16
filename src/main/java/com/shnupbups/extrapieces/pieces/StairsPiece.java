@@ -12,7 +12,8 @@ import net.minecraft.block.enums.BlockHalf;
 import net.minecraft.block.enums.StairShape;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.Registries;
 
 import java.util.ArrayList;
 
@@ -42,7 +43,7 @@ public class StairsPiece extends PieceType {
 	}
 
 	public void addBlockstate(ArtificeResourcePack.ClientResourcePackBuilder pack, PieceBlock pb) {
-		pack.addBlockState(Registry.BLOCK.getId(pb.getBlock()), state -> {
+		pack.addBlockState(Registries.BLOCK.getId(pb.getBlock()), state -> {
 			for (Direction d : Direction.values()) {
 				if (!(d.equals(Direction.DOWN) || d.equals(Direction.UP))) {
 					for (BlockHalf h : BlockHalf.values()) {
@@ -226,10 +227,10 @@ public class StairsPiece extends PieceType {
 				}
 			}
 			state.variant("facing=east,half=bottom,shape=straight", var -> {
-				var.model(ExtraPieces.prependToPath(Registry.BLOCK.getId(pb.getBlock()), "block/"));
+				var.model(ExtraPieces.prependToPath(Registries.BLOCK.getId(pb.getBlock()), "block/"));
 			});
 			state.variant("facing=west,half=bottom,shape=straight", var -> {
-				var.model(ExtraPieces.prependToPath(Registry.BLOCK.getId(pb.getBlock()), "block/"));
+				var.model(ExtraPieces.prependToPath(Registries.BLOCK.getId(pb.getBlock()), "block/"));
 				var.rotationY(180);
 				var.uvlock(true);
 			});

@@ -10,7 +10,8 @@ import com.shnupbups.extrapieces.recipe.ShapedPieceRecipe;
 import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.Registries;
 
 import java.util.ArrayList;
 
@@ -41,13 +42,13 @@ public class WallPiece extends PieceType {
 	}
 
 	public void addItemModel(ArtificeResourcePack.ClientResourcePackBuilder pack, PieceBlock pb) {
-		pack.addItemModel(Registry.BLOCK.getId(pb.getBlock()), model -> {
-			model.parent(ExtraPieces.prependToPath(ExtraPieces.appendToPath(Registry.BLOCK.getId(pb.getBlock()), "_inventory"), "block/"));
+		pack.addItemModel(Registries.BLOCK.getId(pb.getBlock()), model -> {
+			model.parent(ExtraPieces.prependToPath(ExtraPieces.appendToPath(Registries.BLOCK.getId(pb.getBlock()), "_inventory"), "block/"));
 		});
 	}
 
 	public void addBlockstate(ArtificeResourcePack.ClientResourcePackBuilder pack, PieceBlock pb) {
-		pack.addBlockState(Registry.BLOCK.getId(pb.getBlock()), state -> {
+		pack.addBlockState(Registries.BLOCK.getId(pb.getBlock()), state -> {
 			state.multipartCase(caze -> {
 				caze.when(Direction.UP.asString(), "true");
 				caze.apply(var -> {

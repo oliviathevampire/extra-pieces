@@ -9,9 +9,10 @@ import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 
-import net.minecraft.tag.TagKey;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.Registries;
 
 import java.util.Collection;
 import java.util.List;
@@ -57,8 +58,8 @@ public class ShapedPieceRecipe extends PieceRecipe {
 
 	public void add(ArtificeResourcePack.ServerResourcePackBuilder data, Identifier id, PieceSet set) {
 		data.addShapedRecipe(id, recipe -> {
-			recipe.result(Registry.BLOCK.getId(this.getOutput(set)), this.getCount());
-			recipe.group(Registry.BLOCK.getId(getOutput(set)));
+			recipe.result(Registries.BLOCK.getId(this.getOutput(set)), this.getCount());
+			recipe.group(Registries.BLOCK.getId(getOutput(set)));
 			recipe.pattern(this.getPattern());
 			for (Map.Entry<Character, Collection<PieceIngredient>> ingredients : this.getKey().asMap().entrySet()) {
 				recipe.multiIngredient(ingredients.getKey(), ingredient -> {

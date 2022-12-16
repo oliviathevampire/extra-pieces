@@ -11,7 +11,8 @@ import com.shnupbups.extrapieces.register.ModProperties;
 import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.Registries;
 
 import java.util.ArrayList;
 
@@ -36,17 +37,17 @@ public class SidingPiece extends PieceType {
 
 	@Override
 	public void addLootTable(ArtificeResourcePack.ServerResourcePackBuilder data, PieceBlock pb) {
-		data.addLootTable(ExtraPieces.prependToPath(Registry.BLOCK.getId(pb.getBlock()), "blocks/"), loot -> {
+		data.addLootTable(ExtraPieces.prependToPath(Registries.BLOCK.getId(pb.getBlock()), "blocks/"), loot -> {
 			loot.type(new Identifier("block"));
 			loot.pool(pool -> {
 				pool.rolls(1);
 				pool.entry(entry -> {
 					entry.type(new Identifier("item"));
-					entry.name(Registry.BLOCK.getId(pb.getBlock()));
+					entry.name(Registries.BLOCK.getId(pb.getBlock()));
 					entry.function(new Identifier("set_count"), func -> {
 						func.add("count", 2);
 						func.condition(new Identifier("block_state_property"), cond -> {
-							cond.add("block", Registry.BLOCK.getId(pb.getBlock()).toString());
+							cond.add("block", Registries.BLOCK.getId(pb.getBlock()).toString());
 							cond.addObject("properties", prop -> {
 								prop.add("type", "double");
 							});
@@ -65,7 +66,7 @@ public class SidingPiece extends PieceType {
 	}
 
 	public void addBlockstate(ArtificeResourcePack.ClientResourcePackBuilder pack, PieceBlock pb) {
-		pack.addBlockState(Registry.BLOCK.getId(pb.getBlock()), state -> {
+		pack.addBlockState(Registries.BLOCK.getId(pb.getBlock()), state -> {
 			for (ModProperties.SidingType t : ModProperties.SidingType.values()) {
 				switch (t) {
 					case SINGLE:

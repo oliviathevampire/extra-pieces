@@ -1,16 +1,23 @@
 package com.shnupbups.extrapieces.core;
 
+import com.ibm.icu.text.Normalizer;
 import com.shnupbups.extrapieces.ExtraPieces;
 import com.shnupbups.extrapieces.blocks.PieceBlock;
 import com.shnupbups.extrapieces.blocks.PieceBlockItem;
+
 import com.shnupbups.extrapieces.recipe.*;
 import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
+import io.github.vampirestudios.artifice.api.builder.TypedJsonObject;
+import io.github.vampirestudios.artifice.api.builder.assets.BlockStateBuilder;
+import io.github.vampirestudios.artifice.api.builder.assets.ModelBuilder;
+import io.github.vampirestudios.artifice.api.builder.data.LootTableBuilder;
 import net.minecraft.item.Item;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
 
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
 public abstract class PieceType {
 
@@ -107,19 +114,32 @@ public abstract class PieceType {
 	}
 
 	public void addLootTable(ArtificeResourcePack.ServerResourcePackBuilder data, PieceBlock pb) {
-		data.addLootTable(ExtraPieces.prependToPath(Registry.BLOCK.getId(pb.getBlock()), "blocks/"), loot -> {
-			loot.type(new Identifier("block"));
-			loot.pool(pool -> {
-				pool.rolls(1);
-				pool.entry(entry -> {
-					entry.type(new Identifier("item"));
-					entry.name(Registry.BLOCK.getId(pb.getBlock()));
-				});
-				pool.condition(new Identifier("survives_explosion"), cond -> {
-				});
-			});
-		});
+		LootTableBuilder loot = new LootTableBuilder();
+		TypedJsonObject cond = new TypedJsonObject();
+		loot.type(new Identifier("block"));
+		loot.pool(new LootTableBuilder.Pool()
+				.rolls(1)
+				.entry(new LootTableBuilder.Pool.Entry()
+						.type(new Identifier("item"))
+						.name(Registries.BLOCK.getId(pb.getBlock())))
+				.condition(new Identifier("survives_explosion"), cond));
+		data.addLootTable(ExtraPieces.prependToPath(Registries.BLOCK.getId(pb.getBlock()), "blocks/"), loot);
+
+
+//		data.addLootTable(ExtraPieces.prependToPath(Registries.BLOCK.getId(pb.getBlock()), "blocks/"), loot -> {
+//			loot.type(new Identifier("block"));
+//			loot.pool(pool -> {
+//				pool.rolls(1);
+//				pool.entry(entry -> {
+//					entry.type(new Identifier("item"));
+//					entry.name(Registries.BLOCK.getId(pb.getBlock()));
+//				});
+//				pool.condition(new Identifier("survives_explosion"), cond -> {
+//				});
+//			});
+//		});
 	}
+
 
 	public void addModels(ArtificeResourcePack.ClientResourcePackBuilder pack, PieceBlock pb) {
 		addBlockModels(pack, pb);
@@ -127,48 +147,55 @@ public abstract class PieceType {
 	}
 
 	public void addBlockModels(ArtificeResourcePack.ClientResourcePackBuilder pack, PieceBlock pb) {
-		pack.addBlockModel(Registry.BLOCK.getId(pb.getBlock()), model -> {
-			model.parent(ExtraPieces.prependToPath(this.getId(), "block/dummy_"));
-			model.texture("particle", pb.getSet().getMainTexture());
-			model.texture("main", pb.getSet().getMainTexture());
-			model.texture("top", pb.getSet().getTopTexture());
-			model.texture("bottom", pb.getSet().getBottomTexture());
-		});
+		ModelBuilder model = new ModelBuilder();
+		model.parent(ExtraPieces.prependToPath(this.getId(), "block/dummy_"));
+		model.texture("particle", pb.getSet().getMainTexture());
+		model.texture("main", pb.getSet().getMainTexture());
+		model.texture("top", pb.getSet().getTopTexture());
+		model.texture("bottom", pb.getSet().getBottomTexture());
+		pack.addBlockModel(Registries.BLOCK.getId(pb.getBlock()), model);
 	}
 
 	public void addItemModel(ArtificeResourcePack.ClientResourcePackBuilder pack, PieceBlock pb) {
-		pack.addItemModel(Registry.BLOCK.getId(pb.getBlock()), model -> {
-			model.parent(ExtraPieces.prependToPath(Registry.BLOCK.getId(pb.getBlock()), "block/"));
-		});
+		ModelBuilder model = new ModelBuilder();
+		pack.addItemModel(Registries.BLOCK.getId(pb.getBlock()), model);
+			model.parent(ExtraPieces.prependToPath(Registries.BLOCK.getId(pb.getBlock()), "block/"));
 	}
 
 	public void addBlockModel(ArtificeResourcePack.ClientResourcePackBuilder pack, PieceBlock pb, String append) {
-		pack.addBlockModel(ExtraPieces.appendToPath(Registry.BLOCK.getId(pb.getBlock()), "_" + append), model -> {
-			model.parent(ExtraPieces.prependToPath(ExtraPieces.appendToPath(this.getId(), "_" + append), "block/dummy_"));
-			model.texture("particle", pb.getSet().getMainTexture());
-			model.texture("main", pb.getSet().getMainTexture());
-			model.texture("top", pb.getSet().getTopTexture());
-			model.texture("bottom", pb.getSet().getBottomTexture());
-		});
+		ModelBuilder model = new ModelBuilder();
+		model.parent(ExtraPieces.prependToPath(ExtraPieces.appendToPath(this.getId(), "_" + append), "block/dummy_"));
+		model.texture("particle", pb.getSet().getMainTexture());
+		model.texture("main", pb.getSet().getMainTexture());
+		model.texture("top", pb.getSet().getTopTexture());
+		model.texture("bottom", pb.getSet().getBottomTexture());
+		pack.addBlockModel(ExtraPieces.appendToPath(Registries.BLOCK.getId(pb.getBlock()), "_" + append), model);
 	}
 
 	public void addBlockstate(ArtificeResourcePack.ClientResourcePackBuilder pack, PieceBlock pb) {
-		pack.addBlockState(Registry.BLOCK.getId(pb.getBlock()), state -> {
-			state.variant("", var -> {
-				var.model(ExtraPieces.prependToPath(Registry.BLOCK.getId(pb.getBlock()), "block/"));
-			});
-		});
+		BlockStateBuilder state = new BlockStateBuilder();
+		state.variant("", new BlockStateBuilder.Variant().model(ExtraPieces.prependToPath(Registries.BLOCK.getId(pb.getBlock()), "block/")));
+		pack.addBlockState(Registries.BLOCK.getId(pb.getBlock()), state);
+
 	}
+
+//		pack.addBlockState(Registries.BLOCK.getId(pb.getBlock()), state -> {
+//			state.variant("", var -> {
+//				var.model(ExtraPieces.prependToPath(Registries.BLOCK.getId(pb.getBlock()), "block/"));
+//			});
+//		});
+//	}
 
 	public PieceBlockItem getBlockItem(PieceBlock pb) {
 		return new PieceBlockItem(pb, new Item.Settings());
 	}
 	
 	public Identifier getModelPath(PieceBlock pb) {
-		return ExtraPieces.prependToPath(Registry.BLOCK.getId(pb.getBlock()), "block/");
+		return ExtraPieces.prependToPath(Registries.BLOCK.getId(pb.getBlock()), "block/");
 	}
 	
 	public Identifier getModelPath(PieceBlock pb, String append) {
-		return ExtraPieces.prependToPath(ExtraPieces.appendToPath(Registry.BLOCK.getId(pb.getBlock()), "_"+append), "block/");
+		return ExtraPieces.prependToPath(ExtraPieces.appendToPath(Registries.BLOCK.getId(pb.getBlock()), "_"+append), "block/");
 	}
 }
+

@@ -11,7 +11,8 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.Registries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -417,7 +418,7 @@ public class ModBlocks {
 	}
 
 	public static void init(ArtificeResourcePack.ServerResourcePackBuilder data) {
-		visitRegistry(Registry.BLOCK, (id, block) -> {
+		visitRegistry(Registries.BLOCK, (id, block) -> {
 			if (!finished) {
 				Iterator<PieceSet.Builder> primed = primedBuilders.iterator();
 				PieceSet.Builder builder;
@@ -451,7 +452,7 @@ public class ModBlocks {
 				}
 			}
 		});
-		visitRegistry(Registry.ITEM, (id, item) -> {
+		visitRegistry(Registries.ITEM, (id, item) -> {
 			if (!finished) {
 				Iterator<PieceSet.Builder> primed = primedBuilders.iterator();
 				PieceSet.Builder builder;

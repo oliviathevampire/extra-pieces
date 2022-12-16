@@ -8,8 +8,10 @@ import com.shnupbups.extrapieces.core.PieceTypes;
 import com.shnupbups.extrapieces.recipe.ShapedPieceRecipe;
 import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
 import net.minecraft.item.Items;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.Registries;
 
 import java.util.ArrayList;
 
@@ -18,8 +20,13 @@ public class FenceGatePiece extends PieceType {
 		super("fence_gate");
 	}
 
-	public FenceGatePieceBlock getNew(PieceSet set) {
-		return new FenceGatePieceBlock(set);
+	public FenceGatePieceBlock getNew(PieceSet set, SoundEvent se1, SoundEvent se2) {
+		return new FenceGatePieceBlock(set,se1,se2);
+	}
+
+	@Override
+	public PieceBlock getNew(PieceSet set) {
+		return null;
 	}
 
 	public ArrayList<ShapedPieceRecipe> getShapedRecipes() {
@@ -36,7 +43,7 @@ public class FenceGatePiece extends PieceType {
 	}
 
 	public void addBlockstate(ArtificeResourcePack.ClientResourcePackBuilder pack, PieceBlock pb) {
-		pack.addBlockState(Registry.BLOCK.getId(pb.getBlock()), state -> {
+		pack.addBlockState(Registries.BLOCK.getId(pb.getBlock()), state -> {
 			for (Direction d : Direction.values()) {
 				if (d != Direction.UP && d != Direction.DOWN) {
 					state.variant("facing=" + d.asString() + ",in_wall=false,open=false", var -> {

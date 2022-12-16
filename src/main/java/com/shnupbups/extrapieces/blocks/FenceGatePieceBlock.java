@@ -11,6 +11,7 @@ import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -28,8 +29,9 @@ public class FenceGatePieceBlock extends FenceGateBlock implements PieceBlock {
 
 	private final PieceSet set;
 
-	public FenceGatePieceBlock(PieceSet set) {
-		super(FabricBlockSettings.copyOf(set.getBase()).materialColor(set.getBase().getDefaultMapColor()));
+
+	public FenceGatePieceBlock(PieceSet set, SoundEvent se1, SoundEvent se2) {
+		super(FabricBlockSettings.copyOf((set.getBase())).materialColor(set.getBase().getDefaultMapColor()),se1,se2);
 		this.set = set;
 	}
 

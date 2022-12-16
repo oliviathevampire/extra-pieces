@@ -27,7 +27,8 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Language;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.Registries;
 
 import java.util.*;
 
@@ -92,7 +93,7 @@ public class PieceSet {
 		this.base = base;
 		this.originalName = name.toLowerCase();
 		this.name = PieceSets.getNewSetName(originalName);
-		Identifier id = Registry.BLOCK.getId(base);
+		Identifier id = Registries.BLOCK.getId(base);
 		this.mainTexture = new Identifier(id.getNamespace(), "block/" + id.getPath());
 		this.topTexture = mainTexture;
 		this.bottomTexture = topTexture;
@@ -175,7 +176,7 @@ public class PieceSet {
 	}
 
 	public boolean hasMainTexture() {
-		Identifier id = Registry.BLOCK.getId(base);
+		Identifier id = Registries.BLOCK.getId(base);
 		Identifier def = new Identifier(id.getNamespace(), "block/" + id.getPath());
 		return !getMainTexture().equals(def);
 	}
@@ -296,13 +297,13 @@ public class PieceSet {
 
 			Identifier id = new Identifier(type.getId().getNamespace(), type.getBlockId(getName()));
 
-			Registry.register(Registry.BLOCK, id, block.getBlock());
+			Registry.register(Registries.BLOCK, id, block.getBlock());
 
 			if (this.getBase() != Blocks.AIR) ModItemGroups.getItemGroup(block);
 
 			BlockItem item = type.getBlockItem(block);
 			item.appendBlocks(Item.BLOCK_ITEMS, item);
-			Registry.register(Registry.ITEM, id, item);
+			Registry.register(Registries.ITEM, id, item);
 		}
 		registered = true;
 		//System.out.println("DEBUG! PieceSet register: "+this.toString());
@@ -439,7 +440,7 @@ public class PieceSet {
 	}
 	public JsonObject toJson() {
 		JsonObject ob = new JsonObject();
-		ob.put("base", new JsonPrimitive(Registry.BLOCK.getId(this.getBase())));
+		ob.put("base", new JsonPrimitive(Registries.BLOCK.getId(this.getBase())));
 		if (this.isStonecuttable() != this.isNormallyStonecuttable()) {
 			ob.put("stonecuttable", new JsonPrimitive(this.isStonecuttable()));
 		}
@@ -465,7 +466,7 @@ public class PieceSet {
 		if (!this.getVanillaTypes().isEmpty()) {
 			JsonObject vp = new JsonObject();
 			for (PieceType p : this.getVanillaTypes()) {
-				vp.put(p.toString(), new JsonPrimitive(Registry.BLOCK.getId(this.getPiece(p))));
+				vp.put(p.toString(), new JsonPrimitive(Registries.BLOCK.getId(this.getPiece(p))));
 			}
 			ob.put("vanilla_pieces", vp);
 		}
@@ -623,7 +624,7 @@ public class PieceSet {
 				int i = 0;
 				for (PieceRecipe pr : pb.getType().getCraftingRecipes()) {
 					if (pr.canAddForSet(this)) {
-						Identifier bid = Registry.BLOCK.getId(pb.getBlock());
+						Identifier bid = Registries.BLOCK.getId(pb.getBlock());
 						if(!ModRecipes.checkIsAir(bid, this)) {
 							Identifier id = ExtraPieces.getID(bid.getPath() + "_" + (i++));
 							pr.add(data, id, this);
@@ -634,7 +635,7 @@ public class PieceSet {
 
 			}
 			if (!isVanillaPiece(pb.getType()) && pb.getType() != PieceTypes.BASE && (isStonecuttable() || ModConfigs.everythingStonecuttable)) {
-				Identifier bid = Registry.BLOCK.getId(pb.getBlock());
+				Identifier bid = Registries.BLOCK.getId(pb.getBlock());
 				if(!ModRecipes.checkIsAir(bid, this)) {
 					Identifier id = ExtraPieces.getID(bid.getPath() + "_stonecutting");
 					StonecuttingPieceRecipe r = pb.getType().getStonecuttingRecipe();
@@ -645,7 +646,7 @@ public class PieceSet {
 				}
 			}
 			if (ExtraPieces.isWoodmillInstalled() && !isVanillaPiece(pb.getType()) && pb.getType() != PieceTypes.BASE && isWoodmillable()) {
-				Identifier bid = Registry.BLOCK.getId(pb.getBlock());
+				Identifier bid = Registries.BLOCK.getId(pb.getBlock());
 				if(!ModRecipes.checkIsAir(bid, this)) {
 					Identifier id = ExtraPieces.getID(bid.getPath() + "_woodmilling");
 					WoodmillingPieceRecipe r = pb.getType().getWoodmillingRecipe();
@@ -768,10 +769,10 @@ public class PieceSet {
 		public PieceSet build() {
 			if(shouldLoad()) {
 				if (built) {
-					return PieceSets.getSet(Registry.BLOCK.get(base));
+					return PieceSets.getSet(Registries.BLOCK.get(base));
 				}
 				
-				PieceSet ps = new PieceSet(Registry.BLOCK.get(base), name, genTypes);
+				PieceSet ps = new PieceSet(Registries.BLOCK.get(base), name, genTypes);
 				if (this.stonecuttable != null) ps.setStonecuttable(this.stonecuttable);
 				if (this.woodmillable != null) ps.setWoodmillable(this.woodmillable);
 				if (this.opaque != null) ps.setOpaque(this.opaque);
@@ -780,7 +781,7 @@ public class PieceSet {
 				if (this.bottomTexture != null) ps.setBottomTexture(this.bottomTexture);
 				
 				for (Map.Entry<PieceType, Identifier> vanillaPiece : this.getVanillaPieces().entrySet()) {
-					ps.addVanillaPiece(vanillaPiece.getKey(), Registry.BLOCK.get(vanillaPiece.getValue()));
+					ps.addVanillaPiece(vanillaPiece.getKey(), Registries.BLOCK.get(vanillaPiece.getValue()));
 				}
 				
 				if (this.includeMode) ps.setInclude();
@@ -829,12 +830,12 @@ public class PieceSet {
 		}
 
 		public boolean isReady() {
-			if (Registry.BLOCK.getOrEmpty(base).isEmpty() || Registry.ITEM.getOrEmpty(base).isEmpty()) {
+			if (Registries.BLOCK.getOrEmpty(base).isEmpty() || Registries.ITEM.getOrEmpty(base).isEmpty()) {
 				return false;
 			}
 
 			for (Identifier id : getVanillaPieces().values()) {
-				if (Registry.BLOCK.getOrEmpty(id).isEmpty() || Registry.ITEM.getOrEmpty(id).isEmpty()) {
+				if (Registries.BLOCK.getOrEmpty(id).isEmpty() || Registries.ITEM.getOrEmpty(id).isEmpty()) {
 					return false;
 				}
 			}

@@ -8,7 +8,8 @@ import com.shnupbups.extrapieces.core.PieceType;
 import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
 import net.minecraft.block.Block;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.Registries;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,7 +26,7 @@ public class ModTags {
 				Block block = pieceBlock.getBlock();
 
 				if (block instanceof PieceBlock) {
-					identifiers.add(Registry.BLOCK.getId(block));
+					identifiers.add(Registries.BLOCK.getId(block));
 				}
 			}
 		}

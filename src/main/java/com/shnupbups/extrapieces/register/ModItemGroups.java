@@ -2,7 +2,8 @@ package com.shnupbups.extrapieces.register;
 
 import com.shnupbups.extrapieces.blocks.PieceBlock;
 import com.shnupbups.extrapieces.core.PieceType;
-import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+// import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -32,6 +33,6 @@ public class ModItemGroups {
 	}
 
 	public static ItemGroup createItemGroup(PieceType type, Block icon) {
-		return groups.put(type, FabricItemGroupBuilder.create(type.getId()).icon(() -> new ItemStack(icon)).build());
+		return groups.put(type, FabricItemGroup.builder(type.getId()).icon(() -> new ItemStack(icon)).build());
 	}
 }
