@@ -158,8 +158,8 @@ public abstract class PieceType {
 
 	public void addItemModel(ArtificeResourcePack.ClientResourcePackBuilder pack, PieceBlock pb) {
 		ModelBuilder model = new ModelBuilder();
+		model.parent(ExtraPieces.prependToPath(Registries.BLOCK.getId(pb.getBlock()), "block/"));
 		pack.addItemModel(Registries.BLOCK.getId(pb.getBlock()), model);
-			model.parent(ExtraPieces.prependToPath(Registries.BLOCK.getId(pb.getBlock()), "block/"));
 	}
 
 	public void addBlockModel(ArtificeResourcePack.ClientResourcePackBuilder pack, PieceBlock pb, String append) {
