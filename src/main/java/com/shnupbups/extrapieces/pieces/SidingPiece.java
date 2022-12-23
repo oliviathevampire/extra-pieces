@@ -1,5 +1,6 @@
 package com.shnupbups.extrapieces.pieces;
 
+import com.google.gson.JsonObject;
 import com.shnupbups.extrapieces.ExtraPieces;
 import com.shnupbups.extrapieces.blocks.PieceBlock;
 import com.shnupbups.extrapieces.blocks.SidingPieceBlock;
@@ -9,10 +10,12 @@ import com.shnupbups.extrapieces.core.PieceTypes;
 import com.shnupbups.extrapieces.recipe.ShapedPieceRecipe;
 import com.shnupbups.extrapieces.register.ModProperties;
 import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
+import io.github.vampirestudios.artifice.api.builder.TypedJsonObject;
+import io.github.vampirestudios.artifice.api.builder.assets.BlockStateBuilder;
+import io.github.vampirestudios.artifice.api.builder.data.LootTableBuilder;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.Registries;
 
 import java.util.ArrayList;
 
@@ -37,27 +40,23 @@ public class SidingPiece extends PieceType {
 
 	@Override
 	public void addLootTable(ArtificeResourcePack.ServerResourcePackBuilder data, PieceBlock pb) {
-		data.addLootTable(ExtraPieces.prependToPath(Registries.BLOCK.getId(pb.getBlock()), "blocks/"), loot -> {
-			loot.type(new Identifier("block"));
-			loot.pool(pool -> {
-				pool.rolls(1);
-				pool.entry(entry -> {
-					entry.type(new Identifier("item"));
-					entry.name(Registries.BLOCK.getId(pb.getBlock()));
-					entry.function(new Identifier("set_count"), func -> {
-						func.add("count", 2);
-						func.condition(new Identifier("block_state_property"), cond -> {
-							cond.add("block", Registries.BLOCK.getId(pb.getBlock()).toString());
-							cond.addObject("properties", prop -> {
-								prop.add("type", "double");
-							});
-						});
-					});
-					entry.function(new Identifier("explosion_decay"), cond -> {
-					});
-				});
-			});
-		});
+		LootTableBuilder builder = new LootTableBuilder()
+				.type(new Identifier("block"));
+		LootTableBuilder.Pool pool = new LootTableBuilder.Pool()
+				.rolls(1);
+		LootTableBuilder.Pool.Entry entry = new LootTableBuilder.Pool.Entry()
+				.type(new Identifier("item"))
+				.name(Registries.BLOCK.getId(pb.getBlock()));
+		LootTableBuilder.Pool.Entry.Function function = new LootTableBuilder.Pool.Entry.Function(new JsonObject());
+		function.add("count", 2);
+		TypedJsonObject condition = new TypedJsonObject()
+				.add("block", Registries.BLOCK.getId(pb.getBlock()).toString())
+				.add("properties", new TypedJsonObject().add("type", "double"));
+		function.condition(new Identifier("block_state_property"), condition);
+		entry.function(new Identifier("set_count"), function);
+		entry.function(new Identifier("explosion_decay"), new LootTableBuilder.Pool.Entry.Function(new JsonObject()));
+		builder.pool(pool);
+		data.addLootTable(ExtraPieces.prependToPath(Registries.BLOCK.getId(pb.getBlock()), "blocks/"), builder);
 	}
 
 	public void addBlockModels(ArtificeResourcePack.ClientResourcePackBuilder pack, PieceBlock pb) {
@@ -66,38 +65,30 @@ public class SidingPiece extends PieceType {
 	}
 
 	public void addBlockstate(ArtificeResourcePack.ClientResourcePackBuilder pack, PieceBlock pb) {
-		pack.addBlockState(Registries.BLOCK.getId(pb.getBlock()), state -> {
-			for (ModProperties.SidingType t : ModProperties.SidingType.values()) {
-				switch (t) {
-					case SINGLE:
-						for (Direction d : Direction.values()) {
-							if (!(d.equals(Direction.DOWN) || d.equals(Direction.UP))) {
-								state.variant("type=" + t.asString() + ",facing=" + d.asString(), var -> {
-									var.uvlock(true);
-									var.model(getModelPath(pb));
-									switch (d) {
-										case EAST:
-											var.rotationY(90);
-											break;
-										case WEST:
-											var.rotationY(270);
-											break;
-										case SOUTH:
-											var.rotationY(180);
-											break;
-									}
-								});
+		BlockStateBuilder builder = new BlockStateBuilder();
+		for (ModProperties.SidingType t : ModProperties.SidingType.values()) {
+			switch (t) {
+				case SINGLE -> {
+					for (Direction d : Direction.values()) {
+						if (!(d.equals(Direction.DOWN) || d.equals(Direction.UP))) {
+							BlockStateBuilder.Variant variant = new BlockStateBuilder.Variant()
+									.uvlock(true)
+									.model(getModelPath(pb));
+							switch (d) {
+								case EAST -> variant.rotationY(90);
+								case WEST -> variant.rotationY(270);
+								case SOUTH -> variant.rotationY(180);
 							}
+							builder.variant("type=" + t.asString() + ",facing=" + d.asString(), variant);
 						}
-						break;
-					case DOUBLE:
-						state.variant("type=" + t.asString(), var -> {
-							var.model(getModelPath(pb, "double"));
-						});
-						break;
+					}
 				}
-
+				case DOUBLE -> builder.variant("type=" + t.asString(), new BlockStateBuilder.Variant()
+						.model(getModelPath(pb, "double"))
+				);
 			}
-		});
+
+		}
+		pack.addBlockState(Registries.BLOCK.getId(pb.getBlock()), builder);
 	}
 }

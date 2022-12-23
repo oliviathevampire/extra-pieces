@@ -8,11 +8,12 @@ import com.shnupbups.extrapieces.core.PieceType;
 import com.shnupbups.extrapieces.core.PieceTypes;
 import com.shnupbups.extrapieces.recipe.ShapedPieceRecipe;
 import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
+import io.github.vampirestudios.artifice.api.builder.assets.BlockStateBuilder;
+import io.github.vampirestudios.artifice.api.builder.assets.ModelBuilder;
 import net.minecraft.item.Items;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.Registries;
 
 import java.util.ArrayList;
 
@@ -42,40 +43,30 @@ public class FencePiece extends PieceType {
 	}
 
 	public void addItemModel(ArtificeResourcePack.ClientResourcePackBuilder pack, PieceBlock pb) {
-		pack.addItemModel(Registries.BLOCK.getId(pb.getBlock()), model -> {
-			model.parent(ExtraPieces.prependToPath(ExtraPieces.appendToPath(Registries.BLOCK.getId(pb.getBlock()), "_inventory"), "block/"));
-		});
+		ModelBuilder builder = new ModelBuilder()
+				.parent(ExtraPieces.prependToPath(ExtraPieces.appendToPath(Registries.BLOCK.getId(pb.getBlock()), "_inventory"), "block/"));
+		pack.addItemModel(Registries.BLOCK.getId(pb.getBlock()), builder);
 	}
 
 	public void addBlockstate(ArtificeResourcePack.ClientResourcePackBuilder pack, PieceBlock pb) {
-		pack.addBlockState(Registries.BLOCK.getId(pb.getBlock()), state -> {
-			state.multipartCase(caze -> {
-				caze.apply(var -> {
-					var.model(getModelPath(pb));
-				});
-			});
-			for (Direction d : Direction.values()) {
-				if (d != Direction.UP && d != Direction.DOWN) {
-					state.multipartCase(caze -> {
-						caze.when(d.asString(), "true");
-						caze.apply(var -> {
-							var.model(getModelPath(pb, "side"));
-							var.uvlock(true);
-							switch (d) {
-								case EAST:
-									var.rotationY(90);
-									break;
-								case WEST:
-									var.rotationY(270);
-									break;
-								case SOUTH:
-									var.rotationY(180);
-									break;
-							}
-						});
-					});
+		BlockStateBuilder builder = new BlockStateBuilder()
+				.multipartCase(new BlockStateBuilder.Case().apply(new BlockStateBuilder.Variant().model(getModelPath(pb))));
+		for (Direction d : Direction.values()) {
+			if (d != Direction.UP && d != Direction.DOWN) {
+				BlockStateBuilder.Case caze = new BlockStateBuilder.Case();
+				caze.when(d.asString(), "true");
+				BlockStateBuilder.Variant variant = new BlockStateBuilder.Variant()
+						.model(getModelPath(pb, "side"))
+						.uvlock(true);
+				switch (d) {
+					case EAST -> variant.rotationY(90);
+					case WEST -> variant.rotationY(270);
+					case SOUTH -> variant.rotationY(180);
 				}
+				caze.apply(variant);
+				builder.multipartCase(caze);
 			}
-		});
+		}
+		pack.addBlockState(Registries.BLOCK.getId(pb.getBlock()), builder);
 	}
 }

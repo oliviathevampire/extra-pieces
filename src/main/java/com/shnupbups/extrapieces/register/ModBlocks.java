@@ -482,8 +482,6 @@ public class ModBlocks {
 		FabricLoader.getInstance().getEntrypoints("extrapieces", EPInitializer.class).forEach(api -> api.addData(data));
 
 		ModBlocks.finished = true;
-
-		ExtraPieces.dump();
 	}
 
 	public static boolean isDone() {

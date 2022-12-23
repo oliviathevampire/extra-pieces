@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '0.11-SNAPSHOT'
+	id 'fabric-loom' version '1.0-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -12,6 +12,8 @@ group = project.maven_group
 
 repositories {
 	mavenCentral()
+	mavenLocal()
+	maven { url = 'https://server.bbkr.space/artifactory/libs-release/' }
 }
 
 dependencies {
@@ -28,11 +30,8 @@ dependencies {
 	include "io.github.vampirestudios:artifice:${project.artifice_version}"
 
 	// Jankson
-	//modImplementation "io.github.cottonmc:Jankson-Fabric:${project.jankson_version}"
-	//include "io.github.cottonmc:Jankson-Fabric:${project.jankson_version}"
-	
-	modImplementation "blue.endless:jankson:${project.jankson_version}"
-	include "blue.endless:jankson:${project.jankson_version}"
+	modImplementation "io.github.cottonmc:Jankson-Fabric:${project.jankson_version}"
+	include "io.github.cottonmc:Jankson-Fabric:${project.jankson_version}"
 }
 
 processResources {

@@ -5,9 +5,9 @@ import com.shnupbups.extrapieces.blocks.PostPieceBlock;
 import com.shnupbups.extrapieces.core.PieceSet;
 import com.shnupbups.extrapieces.core.PieceType;
 import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
-import net.minecraft.util.math.Direction;
-import net.minecraft.registry.Registry;
+import io.github.vampirestudios.artifice.api.builder.assets.BlockStateBuilder;
 import net.minecraft.registry.Registries;
+import net.minecraft.util.math.Direction;
 
 public class PostPiece extends PieceType {
 	public PostPiece() {
@@ -19,19 +19,19 @@ public class PostPiece extends PieceType {
 	}
 
 	public void addBlockstate(ArtificeResourcePack.ClientResourcePackBuilder pack, PieceBlock pb) {
-		pack.addBlockState(Registries.BLOCK.getId(pb.getBlock()), state -> {
-			for (Direction.Axis a : Direction.Axis.values()) {
-				state.variant("axis=" + a.asString(), var -> {
-					var.uvlock(true);
-					var.model(getModelPath(pb));
-					if (a != Direction.Axis.Y) {
-						var.rotationX(90);
-						if (a == Direction.Axis.X) {
-							var.rotationY(90);
-						}
-					}
-				});
+		BlockStateBuilder builder = new BlockStateBuilder();
+		for (Direction.Axis a : Direction.Axis.values()) {
+			BlockStateBuilder.Variant variant = new BlockStateBuilder.Variant()
+					.uvlock(true)
+					.model(getModelPath(pb));
+			if (a != Direction.Axis.Y) {
+				variant.rotationX(90);
+				if (a == Direction.Axis.X) {
+					variant.rotationY(90);
+				}
 			}
-		});
+			builder.variant("axis=" + a.asString(), variant);
+		}
+		pack.addBlockState(Registries.BLOCK.getId(pb.getBlock()), builder);
 	}
 }

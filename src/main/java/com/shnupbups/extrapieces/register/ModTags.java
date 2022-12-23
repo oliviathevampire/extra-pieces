@@ -6,10 +6,11 @@ import com.shnupbups.extrapieces.core.PieceSet;
 import com.shnupbups.extrapieces.core.PieceSets;
 import com.shnupbups.extrapieces.core.PieceType;
 import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
+import io.github.vampirestudios.artifice.api.builder.data.TagBuilder;
 import net.minecraft.block.Block;
-import net.minecraft.util.Identifier;
-import net.minecraft.registry.Registry;
+import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
+import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,17 +36,16 @@ public class ModTags {
 			PieceType type = entry.getKey();
 			HashSet<Identifier> identifiers = entry.getValue();
 
-			data.addBlockTag(entry.getKey().getTagId(), tag -> {
-				tag.replace(false);
-				tag.values(identifiers.toArray(new Identifier[0]));
-			});
+			data.addTag("block", entry.getKey().getTagId(), new TagBuilder<Block>()
+					.replace(false)
+					.values(identifiers.toArray(new Identifier[0]))
+			);
+			data.addTag("item", entry.getKey().getTagId(), new TagBuilder<Item>()
+					.replace(false)
+					.values(identifiers.toArray(new Identifier[0]))
+			);
 
-			data.addItemTag(entry.getKey().getTagId(), tag -> {
-				tag.replace(false);
-				tag.values(identifiers.toArray(new Identifier[0]));
-			});
-
-			ExtraPieces.debugLog("Added block and item tags for " + type.toString() + ", " + identifiers.size() + " entries.");
+			ExtraPieces.debugLog("Added block and item tags for " + type + ", " + identifiers.size() + " entries.");
 		}
 	}
 }

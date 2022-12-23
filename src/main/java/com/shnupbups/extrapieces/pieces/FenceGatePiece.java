@@ -7,11 +7,11 @@ import com.shnupbups.extrapieces.core.PieceType;
 import com.shnupbups.extrapieces.core.PieceTypes;
 import com.shnupbups.extrapieces.recipe.ShapedPieceRecipe;
 import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
+import io.github.vampirestudios.artifice.api.builder.assets.BlockStateBuilder;
 import net.minecraft.item.Items;
+import net.minecraft.registry.Registries;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.Direction;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.Registries;
 
 import java.util.ArrayList;
 
@@ -43,71 +43,47 @@ public class FenceGatePiece extends PieceType {
 	}
 
 	public void addBlockstate(ArtificeResourcePack.ClientResourcePackBuilder pack, PieceBlock pb) {
-		pack.addBlockState(Registries.BLOCK.getId(pb.getBlock()), state -> {
-			for (Direction d : Direction.values()) {
-				if (d != Direction.UP && d != Direction.DOWN) {
-					state.variant("facing=" + d.asString() + ",in_wall=false,open=false", var -> {
-						var.model(getModelPath(pb));
-						var.uvlock(true);
-						switch (d) {
-							case NORTH:
-								var.rotationY(180);
-								break;
-							case WEST:
-								var.rotationY(90);
-								break;
-							case EAST:
-								var.rotationY(270);
-								break;
-						}
-					});
-					state.variant("facing=" + d.asString() + ",in_wall=true,open=false", var -> {
-						var.model(getModelPath(pb, "wall"));
-						var.uvlock(true);
-						switch (d) {
-							case NORTH:
-								var.rotationY(180);
-								break;
-							case WEST:
-								var.rotationY(90);
-								break;
-							case EAST:
-								var.rotationY(270);
-								break;
-						}
-					});
-					state.variant("facing=" + d.asString() + ",in_wall=false,open=true", var -> {
-						var.model(getModelPath(pb, "open"));
-						var.uvlock(true);
-						switch (d) {
-							case NORTH:
-								var.rotationY(180);
-								break;
-							case WEST:
-								var.rotationY(90);
-								break;
-							case EAST:
-								var.rotationY(270);
-								break;
-						}
-					});
-					state.variant("facing=" + d.asString() + ",in_wall=true,open=true", var -> {
-						var.model(getModelPath(pb, "wall_open"));
-						var.uvlock(true);
-						switch (d) {
-							case NORTH:
-								var.rotationY(180);
-								break;
-							case WEST:
-								var.rotationY(90);
-								break;
-							case EAST:
-								var.rotationY(270);
-								break;
-						}
-					});
+		BlockStateBuilder builder = new BlockStateBuilder();
+		for (Direction d : Direction.values()) {
+			if (d != Direction.UP && d != Direction.DOWN) {
+				BlockStateBuilder.Variant variant = new BlockStateBuilder.Variant();
+				variant.model(getModelPath(pb));
+				variant.uvlock(true);
+				switch (d) {
+					case NORTH -> variant.rotationY(180);
+					case WEST -> variant.rotationY(90);
+					case EAST -> variant.rotationY(270);
 				}
+				builder.variant("facing=" + d.asString() + ",in_wall=false,open=false", variant);
+				variant = new BlockStateBuilder.Variant();
+				variant.model(getModelPath(pb, "wall"));
+				variant.uvlock(true);
+				switch (d) {
+					case NORTH -> variant.rotationY(180);
+					case WEST -> variant.rotationY(90);
+					case EAST -> variant.rotationY(270);
+				}
+				builder.variant("facing=" + d.asString() + ",in_wall=true,open=false", variant);
+				variant = new BlockStateBuilder.Variant();
+				variant.model(getModelPath(pb, "open"));
+				variant.uvlock(true);
+				switch (d) {
+					case NORTH -> variant.rotationY(180);
+					case WEST -> variant.rotationY(90);
+					case EAST -> variant.rotationY(270);
+				}
+				builder.variant("facing=" + d.asString() + ",in_wall=false,open=true", variant);
+				variant = new BlockStateBuilder.Variant();
+				variant.model(getModelPath(pb, "wall_open"));
+				variant.uvlock(true);
+				switch (d) {
+					case NORTH -> variant.rotationY(180);
+					case WEST -> variant.rotationY(90);
+					case EAST -> variant.rotationY(270);
+				}
+				builder.variant("facing=" + d.asString() + ",in_wall=true,open=true", variant);
 			}
-		});
+		}
+		pack.addBlockState(Registries.BLOCK.getId(pb.getBlock()), builder);
 	}
 }

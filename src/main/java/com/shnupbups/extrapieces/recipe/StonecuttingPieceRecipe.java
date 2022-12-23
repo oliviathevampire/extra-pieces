@@ -3,16 +3,14 @@ package com.shnupbups.extrapieces.recipe;
 import com.shnupbups.extrapieces.core.PieceSet;
 import com.shnupbups.extrapieces.core.PieceType;
 import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
-import net.minecraft.item.Item;
+import io.github.vampirestudios.artifice.api.builder.data.recipe.StonecuttingRecipeBuilder;
 import net.minecraft.item.ItemConvertible;
-
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.Registries;
 
 public class StonecuttingPieceRecipe extends PieceRecipe {
-	private PieceIngredient input;
+	private final PieceIngredient input;
 
 	public StonecuttingPieceRecipe(PieceType output, int count, PieceIngredient input) {
 		super(output, count);
@@ -36,14 +34,14 @@ public class StonecuttingPieceRecipe extends PieceRecipe {
 	}
 
 	public void add(ArtificeResourcePack.ServerResourcePackBuilder data, Identifier id, PieceSet set) {
-		data.addStonecuttingRecipe(id, recipe -> {
-			recipe.result(Registries.BLOCK.getId(getOutput(set)));
-			recipe.group(Registries.BLOCK.getId(getOutput(set)));
-			recipe.count(getCount());
-			PieceIngredient pi = getInput();
-			if(pi.isTag()) recipe.ingredientTag(pi.getId(set));
-			else recipe.ingredientItem(pi.getId(set));
-		});
+		StonecuttingRecipeBuilder builder = new StonecuttingRecipeBuilder()
+				.result(Registries.BLOCK.getId(getOutput(set)))
+				.group(Registries.BLOCK.getId(getOutput(set)))
+				.count(getCount());
+		PieceIngredient pi = getInput();
+		if(pi.isTag()) builder.ingredientTag(pi.getId(set));
+		else builder.ingredientItem(pi.getId(set));
+		data.addStonecuttingRecipe(id, builder);
 	}
 
 	@Override

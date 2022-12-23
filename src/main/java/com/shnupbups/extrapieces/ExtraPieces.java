@@ -8,13 +8,12 @@ import com.shnupbups.extrapieces.debug.DebugItem;
 import com.shnupbups.extrapieces.register.ModBlocks;
 import com.shnupbups.extrapieces.register.ModConfigs;
 import io.github.vampirestudios.artifice.api.Artifice;
-import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.util.Identifier;
-import net.minecraft.registry.Registry;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,8 +24,6 @@ public class ExtraPieces implements ModInitializer {
 	public static final String mod_name = "Extra Pieces";
 	public static final String piece_pack_version = "2.9.0";
 	public static final Logger logger = LogManager.getFormatterLogger(mod_name);
-
-	public static ArtificeResourcePack datapack;
 
 	public static File configDir;
 	public static File ppDir;
@@ -75,16 +72,6 @@ public class ExtraPieces implements ModInitializer {
 		return FabricLoader.getInstance().isModLoaded("woodmill");
 	}
 
-	public static void dump() {
-		if (ModConfigs.dumpData) {
-			try {
-				datapack.dumpResources(FabricLoader.getInstance().getConfigDirectory().getParent() + "/dump");
-			} catch (Exception e) {
-				ExtraPieces.debugLog("BIG OOF: " + e.getMessage());
-			}
-		}
-	}
-
 	@Override
 	public void onInitialize() {
 		ModConfigs.init();
@@ -94,14 +81,21 @@ public class ExtraPieces implements ModInitializer {
 			api.onInitialize();
 		});
 		ModConfigs.initPiecePacks();
-		datapack = Artifice.registerData(getID("ep_data"), ArtificeResourcePack.ofData(ModBlocks::init));
+		Artifice.registerDataPack(getID("ep_data"), serverResourcePackBuilder -> {
+			ModBlocks.init(serverResourcePackBuilder);
+			try {
+				serverResourcePackBuilder.dump(FabricLoader.getInstance().getConfigDir().getParent() + "/dump", "data", ModConfigs.dumpData && ModBlocks.finished);
+			} catch (Exception e) {
+				ExtraPieces.debugLog("BIG OOF: " + e.getMessage());
+			}
+		});
 		Registry.register(Registries.ITEM, getID("debug_item"), new DebugItem());
 
 		ServerLifecycleEvents.SERVER_STARTED.register(server -> {
 			if (ModBlocks.setBuilders.size() != PieceSets.registry.size()) {
 				for (PieceSet.Builder psb : ModBlocks.setBuilders.values()) {
 					if (!psb.isBuilt())
-						System.out.println("Piece Set " + psb.toString() + " could not be built, make sure the base and any vanilla pieces actually exist!");
+						System.out.println("Piece Set " + psb + " could not be built, make sure the base and any vanilla pieces actually exist!");
 				}
 			}
 		});

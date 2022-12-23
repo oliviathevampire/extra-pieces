@@ -6,6 +6,8 @@ import com.google.common.collect.MultimapBuilder;
 import com.shnupbups.extrapieces.core.PieceSet;
 import com.shnupbups.extrapieces.core.PieceType;
 import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
+import io.github.vampirestudios.artifice.api.builder.data.recipe.MultiIngredientBuilder;
+import io.github.vampirestudios.artifice.api.builder.data.recipe.ShapedRecipeBuilder;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 
@@ -57,19 +59,19 @@ public class ShapedPieceRecipe extends PieceRecipe {
 	}
 
 	public void add(ArtificeResourcePack.ServerResourcePackBuilder data, Identifier id, PieceSet set) {
-		data.addShapedRecipe(id, recipe -> {
-			recipe.result(Registries.BLOCK.getId(this.getOutput(set)), this.getCount());
-			recipe.group(Registries.BLOCK.getId(getOutput(set)));
-			recipe.pattern(this.getPattern());
-			for (Map.Entry<Character, Collection<PieceIngredient>> ingredients : this.getKey().asMap().entrySet()) {
-				recipe.multiIngredient(ingredients.getKey(), ingredient -> {
-					for (PieceIngredient pi : ingredients.getValue()) {
-						if (pi.isTag()) ingredient.tag(pi.getId(set));
-						else ingredient.item(pi.getId(set));
-					}
-				});
+		ShapedRecipeBuilder builder = new ShapedRecipeBuilder()
+				.result(Registries.BLOCK.getId(this.getOutput(set)), this.getCount())
+				.group(Registries.BLOCK.getId(getOutput(set)))
+				.pattern(this.getPattern());
+		for (Map.Entry<Character, Collection<PieceIngredient>> ingredients : this.getKey().asMap().entrySet()) {
+			MultiIngredientBuilder ingredientBuilder = new MultiIngredientBuilder();
+			for (PieceIngredient pi : ingredients.getValue()) {
+				if (pi.isTag()) ingredientBuilder.tag(pi.getId(set));
+				else ingredientBuilder.item(pi.getId(set));
 			}
-		});
+			builder.multiIngredient(ingredients.getKey(), ingredientBuilder);
+		}
+		data.addShapedRecipe(id, builder);
 	}
 
 	@Override
